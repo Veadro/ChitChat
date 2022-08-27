@@ -8,6 +8,9 @@ var credentials = { key: privateKey, cert: certificate };
 var express = require("express");
 var app = express();
 
+//load the chatlog.json file as a json object
+var chatlog = JSON.parse(fs.readFileSync("./json/chatlog.json", "utf8"));
+
 // your express configuration here
 
 var httpServer = http.createServer(app);
@@ -37,6 +40,23 @@ io.on("connection", (socket) => {
 });
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
+    //safe the message to a chatlog.json file
+    //add the message to chatlog
+    //get the current time
+    //add the time to the message
+    //add the message to the chatlog
+    //send the message to the client
+    var time = new Date();
+    var timeString = time.toLocaleString();
+    var message = {
+      message: msg,
+      time: timeString,
+    };
+    chatlog.messages.push(message);
+
+    //save the chatlog to a json file
+    fs.writeFileSync("./json/chatlog.json", JSON.stringify(chatlog));
+    //send the message to discord
     io.emit("chat message", msg);
   });
 });
